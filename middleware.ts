@@ -4,8 +4,8 @@ import { checkRequestRateLimit } from '@/lib/rate-limit';
 function applySecurityHeaders(response: NextResponse, nonce: string) {
   const csp = [
     "default-src 'self'",
-    "frame-src 'self' https://*.moneygram.com https://stellar.moneygram.com https://*.yellowcard.io https://stellar.yellowcard.io https://*.stellar.org",
-    "connect-src 'self' https://horizon.stellar.org https://horizon-testnet.stellar.org https://*.moneygram.com https://stellar.moneygram.com https://*.yellowcard.io https://stellar.yellowcard.io https://api.yellowcard.io",
+    "frame-src 'self' https://*.moonpay.com https://*.stellar.org",
+    "connect-src 'self' https://horizon.stellar.org https://horizon-testnet.stellar.org https://*.moonpay.com",
     `script-src 'self' 'nonce-${nonce}'`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https: blob:",

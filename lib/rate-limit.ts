@@ -31,7 +31,7 @@ const POLICIES: RateLimitPolicy[] = [
   },
   {
     id: 'api-auth',
-    pathPrefixes: ['/api/auth', '/api/sep24/auth'],
+    pathPrefixes: ['/api/auth'],
     methods: ['GET', 'POST'],
     maxRequests: 30,
     windowMs: 60_000,
@@ -194,50 +194,11 @@ export function checkRequestRateLimit(request: NextRequest): RequestRateLimitRes
   }
 }
 
-// ---------------------------------------------------------------------------
-// KYC-specific rate limiters
-// ---------------------------------------------------------------------------
-
-export const kycSubmitHourly = new RouteRateLimiter({
-  id: 'kyc-submit-hourly',
-  maxRequests: 3,
-  windowMs: 60 * 60_000,
-})
-
-export const kycSubmitDaily = new RouteRateLimiter({
-  id: 'kyc-submit-daily',
-  maxRequests: 10,
-  windowMs: 24 * 60 * 60_000,
-})
-
-export const kycSubmitGlobal = new RouteRateLimiter({
-  id: 'kyc-submit-global',
-  maxRequests: 100,
-  windowMs: 60_000,
-})
-
-export const kycStatusLimiter = new RouteRateLimiter({
-  id: 'kyc-status',
-  maxRequests: 30,
-  windowMs: 60_000,
-})
-
 export const twoFactorLimiter = new RouteRateLimiter({
   id: '2fa-verify',
   maxRequests: 5,
-  windowMs: 15 * 60_000, // 5 attempts per 15 minutes
+  windowMs: 15 * 60_000,
 })
-
-const KYC_BYPASS_IDS: Set<string> = new Set(
-  (process.env.KYC_RATE_LIMIT_BYPASS_USER_IDS ?? '')
-    .split(',')
-    .map((id) => id.trim())
-    .filter(Boolean)
-)
-
-export function isKycRateLimitBypassed(userId: string): boolean {
-  return KYC_BYPASS_IDS.has(userId)
-}
 
 export function buildRateLimitResponse(result: RequestRateLimitResult): NextResponse {
   const retryAfterSeconds = Math.ceil((result.resetAt - Date.now()) / 1000)
